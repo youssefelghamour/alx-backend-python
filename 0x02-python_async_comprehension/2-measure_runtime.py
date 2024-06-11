@@ -14,6 +14,6 @@ async def measure_runtime() -> float:
         The total runtime is 10 seconds instead of 40 because asyncio.gather
         runs the four async_comprehension coroutines at the same time """
     start_time = time.time()
-    asyncio.gather(*(async_comprehension() for _ in range(4)))
+    await asyncio.gather(*(async_comprehension() for _ in range(4)))
     end_time = time.time()
     return end_time - start_time
