@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """ Unittests for the functions in client module """
 import unittest
-from parameterized import parameterized
+from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
-from unittest.mock import patch, Mock, PropertyMock
+from unittest.mock import patch, Mock, PropertyMock, MagicMock
+from fixtures import TEST_PAYLOAD
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -83,6 +84,71 @@ class TestGithubOrgClient(unittest.TestCase):
 
         # assert the result matches the expected value
         self.assertEqual(result, expected)
+
+
+# structure of the TEST_PAYLOAD from fixtures.py
+"""
+TEST_PAYLOAD = [
+    (
+        {"repos_url": "https://api.github.com/orgs/google/repos"},  # org_data
+        [
+            {"name": "episodes.dart"},  # repos_data
+            {"name": "cpp-netlib"}
+        ]
+    ),
+]
+"""
+# The @parameterized_class decorator takes actual data from fixtures.py and
+# assigns them to the attributes:
+#       ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+# which are then passed to the TestIntegrationGithubOrgClient class as
+# attributes or data sets for testing.
+
+
+@parameterized_class(
+    ("org_payload", "repos_payload", "expected_repos", "apache2_repos"),
+    TEST_PAYLOAD
+)
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """ integration test for public_repos """
+
+    @classmethod
+    def setUpClass(cls):
+        """ setup method """
+        # Define a function to handle the behavior
+        # of the mocked 'requests.get'
+        def get_side_effect(url):
+            # Define the URL that triggers returning org_payload
+            test_url = "https://api.github.com/orgs/google"
+
+            # If the requested URL matches test_url,
+            if url == test_url:
+                # returns a mock object with a json method that
+                # that returns org_payload
+                return MagicMock(json=lambda: cls.org_payload)
+            # return repos_payload as a MagicMock with a
+            # json method for any other URL
+            return MagicMock(json=lambda: cls.repos_payload)
+
+        # Patch 'requests.get' to replace it with a MagicMock for testing
+        cls.get_patcher = patch('requests.get', side_effect=get_side_effect)
+        cls.mock = cls.get_patcher.start()
+
+    def test_public_repos(self):
+        """ Test case for public_repos method """
+        # create an instance of GithubOrgClient with mocked data
+        client = GithubOrgClient("google")
+
+        # assume public_repos fetches repositories based on org_payload
+        repos = client.public_repos()
+
+        # assert that the retrieved repositories match expected_repos
+        self.assertEqual(repos, self.expected_repos)
+
+    @classmethod
+    def tearDownClass(cls):
+        """ stops the patcher """
+        cls.get_patcher.stop()
 
 
 if __name__ == "__main__":
