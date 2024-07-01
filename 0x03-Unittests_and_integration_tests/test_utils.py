@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-""" Unittests for access_nested_map function in utils module """
+""" Unittests for the functions in utils module """
 import unittest
 from parameterized import parameterized
-from utils import access_nested_map, get_json
+from utils import access_nested_map, get_json, memoize
 from unittest.mock import patch, Mock
 
 
@@ -50,6 +50,35 @@ class TestGetJson(unittest.TestCase):
         # assertions
         mock_get.assert_called_once_with(test_url)
         self.assertEqual(result, test_payload)
+
+
+class TestMemoize(unittest.TestCase):
+    """ test cases for memoize function """
+
+    def test_memoize(self):
+        """ test the memoize function """
+
+        class TestClass:
+            """ class for testing """
+
+            def a_method(self):
+                return 42
+
+            @memoize
+            def a_property(self):
+                return self.a_method()
+
+        # patch a_method to mock its behavior
+        with patch.object(TestClass, 'a_method') as mock_a_method:
+            # create an instance of TestClass
+            obj = TestClass()
+
+            # call a_property twice
+            result1 = obj.a_property()
+            result2 = obj.a_property()
+
+            # assert that a_method was called only once
+            mock_a_method.assert_called_once()
 
 
 if __name__ == "__main__":
