@@ -145,6 +145,12 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         # assert that the retrieved repositories match expected_repos
         self.assertEqual(repos, self.expected_repos)
 
+    def test_public_repos_with_license(self):
+        """ tests public_repos with 'apache-2.0' license filter"""
+        client = GithubOrgClient("google")
+        repos = client.public_repos(license="apache-2.0")
+        self.assertEqual(repos, self.apache2_repos)
+
     @classmethod
     def tearDownClass(cls):
         """ stops the patcher """
