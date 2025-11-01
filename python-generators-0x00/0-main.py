@@ -1,24 +1,8 @@
 #!/usr/bin/python3
+from itertools import islice
+stream_users = __import__('0-stream_users')
 
-seed = __import__('seed')
+# iterate over the generator function and print only the first 6 rows
 
-connection = seed.connect_db()
-if connection:
-    seed.create_database(connection)
-    connection.close()
-    print(f"connection successful")
-
-    connection = seed.connect_to_prodev()
-
-    if connection:
-        seed.create_table(connection)
-        seed.insert_data(connection, 'user_data.csv')
-        cursor = connection.cursor()
-        cursor.execute(f"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'ALX_prodev';")
-        result = cursor.fetchone()
-        if result:
-            print(f"Database ALX_prodev is present ")
-        cursor.execute(f"SELECT * FROM user_data LIMIT 5;")
-        rows = cursor.fetchall()
-        print(rows)
-        cursor.close()
+for user in islice(stream_users.stream_users(), 6):
+    print(user)
