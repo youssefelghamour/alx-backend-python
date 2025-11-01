@@ -41,4 +41,12 @@ def batch_processing(batch_size):
     batch = next(stream_users_in_batches(batch_size))
 
     result = [user for user in batch if user['age'] > 25]
+    """
+    # To make it a generator yield each processed batch
+    yield result
+
+    # To print the users in the batch
+    for user in result:
+        print(user)
+    """
     return result
