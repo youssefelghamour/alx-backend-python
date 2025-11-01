@@ -41,5 +41,4 @@ def batch_processing(batch_size):
     batch = next(stream_users_in_batches(batch_size))
 
     result = [user for user in batch if user['age'] > 25]
-    for user in result:
-        print(user)
+    return result
