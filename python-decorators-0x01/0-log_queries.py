@@ -1,5 +1,4 @@
-import sqlite3
-import functools
+import sqlite3, functools
 from datetime import datetime
 
 #### decorator to lof SQL queries
