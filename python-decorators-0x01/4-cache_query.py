@@ -17,7 +17,8 @@ except (FileNotFoundError, json.JSONDecodeError):  # If the file doesn't exist o
 def save_cache():
     """Saves the updated cache to the file for persistence"""
     with open(CACHE_FILE, "w") as f:
-        json.dump(query_cache, f, default=str)
+        # indent=4 makes the JSON pretty-printed with 4 spaces per indent
+        json.dump(query_cache, f, indent=4, default=str)
 
 
 def cache_query(func):
