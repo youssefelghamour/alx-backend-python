@@ -1,7 +1,7 @@
-import sqlite3, functools
+import sqlite3
+import functools
 from datetime import datetime
 
-#### decorator to lof SQL queries
 
 def log_queries(func):
     """ Decorator to log SQL queries to query.log """
@@ -18,6 +18,9 @@ def log_queries(func):
         # Append the log entry to query.log
         with open('query.log', 'a') as log_file:
             log_file.write(log_entry)
+        
+        # Print the log entry to the console
+        print(log_entry.strip())
         
         return func(*args, **kwargs)
     return wrapper
