@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Unit tests for utils module"""
 import unittest
-from utils import access_nested_map
+from unittest.mock import patch
+from utils import access_nested_map, get_json
 from parameterized import parameterized
 
 
@@ -38,6 +39,27 @@ class TestAccessNestedMap(unittest.TestCase):
 
         # Verify the exception message (stored in exception.args[0])
         self.assertEqual(context.exception.args[0], path[-1])
+
+
+class TestGetJson(unittest.TestCase):
+    """Tests for get_json function"""
+
+    @parameterized.expand([
+        ("http://example.com", {"payload": True}),
+        ("http://holberton.io", {"payload": False})
+    ])
+    @patch('utils.requests.get')
+    def test_get_json(self, test_url, test_payload, mock_get):
+        """Tests get_json function"""
+        mock_get.return_value.json.return_value = test_payload
+
+        # Call the function being tested
+        result = get_json(test_url)
+
+        # Assert that requests.get was called once with the test_url
+        mock_get.assert_called_once_with(test_url)
+        # Assert that the result matches the expected payload
+        self.assertEqual(result, test_payload)
 
 
 if __name__ == "__main__":
