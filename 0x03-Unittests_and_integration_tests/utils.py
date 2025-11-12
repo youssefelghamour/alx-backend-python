@@ -49,6 +49,8 @@ def get_json(url: str) -> Dict:
 
 def memoize(fn: Callable) -> Callable:
     """Decorator to memoize a method.
+    self here is the instance of the class we call the fn method on (my_object)
+    the function creates an attribute ("_a_method") for my_object
     Example
     -------
     class MyClass:
@@ -72,4 +74,9 @@ def memoize(fn: Callable) -> Callable:
             setattr(self, attr_name, fn(self))
         return getattr(self, attr_name)
 
+    # The example above shows that the method is called like an attribute
+    # my_object.a_method instead of my_object.a_method()
+    # property allows us to create a method that behaves like an attribute
+    # this way, we can use the memoized function as a property
+    # thus the method as an attribute
     return property(memoized)
