@@ -38,7 +38,11 @@ class GithubOrgClient:
         return get_json(self._public_repos_url)
 
     def public_repos(self, license: str = None) -> List[str]:
-        """Public repos"""
+        """Public repos
+            Returns a list of the names of the repos the current organization has
+            If a license key is passed, only repos with that license key are returned
+            If not, all repos are returned
+        """
         json_payload = self.repos_payload
         public_repos = [
             repo["name"] for repo in json_payload
@@ -49,7 +53,9 @@ class GithubOrgClient:
 
     @staticmethod
     def has_license(repo: Dict[str, Dict], license_key: str) -> bool:
-        """Static: has_license"""
+        """Static: has_license
+            Checks if a repo has the given license key
+        """
         assert license_key is not None, "license_key cannot be None"
         try:
             has_license = access_nested_map(repo, ("license", "key")) == license_key
