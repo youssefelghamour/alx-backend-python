@@ -1,5 +1,23 @@
 #!/usr/bin/env python3
 
+
+"""
+  Mock data for tests
+
+  TEST_PAYLOAD is a list of tuples. Each tuple contains:
+  
+    - TEST_PAYLOAD[0][0]: A dictionary representing the org data with 'repos_url'
+      (result of GithubOrgClient.org; example: https://api.github.com/orgs/google)
+
+    - TEST_PAYLOAD[0][1]: A list of dictionaries representing the repos data
+      (result of GithubOrgClient.repos_payload; example: https://api.github.com/orgs/google/repos)
+
+    - TEST_PAYLOAD[0][2]: A list of all the names of the repos in TEST_PAYLOAD[0][1]
+      (result of GithubOrgClient.public_repos())
+
+    - TEST_PAYLOAD[0][3]: A list of the names of repos with 'apache-2.0' license
+      (result of GithubOrgClient.public_repos("apache-2.0"))
+"""
 TEST_PAYLOAD = [
   (
     {"repos_url": "https://api.github.com/orgs/google/repos"},
