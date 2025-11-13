@@ -4,8 +4,8 @@
 """
   Mock data for tests
 
-  TEST_PAYLOAD is a list of tuples. Each tuple contains:
-  
+  TEST_PAYLOAD is a list of tuples. Each tuple contains: org_payload, repos_payload, expected_repos, apache2_repos
+
     - TEST_PAYLOAD[0][0]: A dictionary representing the org data with 'repos_url'
       (result of GithubOrgClient.org; example: https://api.github.com/orgs/google)
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """A unittest for GithubOrgClient"""
 import unittest
-from unittest.mock import patch, PropertyMock
-from parameterized import parameterized
+from unittest.mock import patch, PropertyMock, Mock
+from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
 from fixtures import TEST_PAYLOAD
 
@@ -105,6 +105,60 @@ class TestGithubOrgClient(unittest.TestCase):
             GithubOrgClient.has_license(repo, license_key),
             expected
         )
+
+
+@parameterized_class([
+    {
+        "org_payload": TEST_PAYLOAD[0][0],
+        "repos_payload": TEST_PAYLOAD[0][1],
+        "expected_repos": TEST_PAYLOAD[0][2],
+        "apache2_repos": TEST_PAYLOAD[0][3],
+    }
+])
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration tests for public_repos method of GithubOrgClient"""
+
+    @classmethod
+    def setUpClass(self):
+        """Set up for the integration tests"""
+
+        def side_effect(url):
+            """Side effect function for mocking requests.get from utils.py
+                Returns a Mock object with a .json() method that returns
+                the appropriate payload based on the URL
+            """
+            # Matches ORG_URL so we can mock GithubOrgClient.org property
+            base_url = self.org_payload["repos_url"].replace("/repos", "")
+
+            mock_resp = Mock()
+
+            # Hanldes requests made by GithubOrgClient.org
+            # to ORG_URL: https://api.github.com/orgs/{org}
+            if url == base_url:
+                mock_resp.json.return_value = self.org_payload
+                return mock_resp
+            # Handles requests made by GithubOrgClient.repos_payload
+            # to _public_repos_url: https://api.github.com/orgs/{org}/repos
+            elif url == self.org_payload["repos_url"]:
+                mock_resp.json.return_value = self.repos_payload
+                return mock_resp
+
+            raise ValueError(f"Wrong URL called: {url}")
+
+        # Patch requests.get for all tests in this class
+        self.get_patcher = patch("utils.requests.get")
+        mock_get = self.get_patcher.start()
+        mock_get.side_effect = side_effect
+
+    def test_public_repos(self):
+        """Tests public_repos method of GithubOrgClient"""
+        client = GithubOrgClient("google")
+        self.assertEqual(client.public_repos(), self.expected_repos)
+
+    @classmethod
+    def tearDownClass(self):
+        """Tear down for the integration tests"""
+        self.get_patcher.stop()
 
 
 if __name__ == "__main__":
