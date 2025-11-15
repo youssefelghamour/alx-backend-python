@@ -6,6 +6,10 @@ from django.db import models
 class User(AbstractUser):
     """Custom User model extending AbstractUser"""
     user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    first_name = models.CharField(max_length=30, null=False)
+    last_name = models.CharField(max_length=30, null=False)
+    email = models.EmailField(unique=True, db_index=True)  # indexed
+    password = models.CharField(max_length=128)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
 
     ROLE_CHOICES = [
@@ -15,8 +19,6 @@ class User(AbstractUser):
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='guest')
     created_at = models.DateTimeField(auto_now_add=True)
-
-    email = models.EmailField(unique=True, db_index=True)  # indexed
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']  # required for superuser
