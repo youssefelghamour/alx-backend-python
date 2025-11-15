@@ -1,15 +1,17 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters  # <- both imported
 from rest_framework.response import Response
-from .models import Conversation, Message, User
-from .serializers import ConversationSerializer, MessageSerializer, UserSerializer
+from .models import User, Conversation, Message
+from .serializers import UserSerializer, ConversationSerializer, MessageSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filter_backends = [filters.OrderingFilter]  
 
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
+    filter_backends = [filters.OrderingFilter]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -20,6 +22,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+    filter_backends = [filters.OrderingFilter]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
