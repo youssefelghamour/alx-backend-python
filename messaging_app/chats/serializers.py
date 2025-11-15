@@ -48,7 +48,7 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ['message_id', 'conversation', 'sender', 'message_body', 'sent_at']
-        read_only_fields = ['message_id', 'sent_at']
+        read_only_fields = ['message_id', 'sent_at', 'conversation']
 
     def validate_sender(self, value):
         """Ensure sender is provided"""
