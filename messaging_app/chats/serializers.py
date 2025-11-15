@@ -3,9 +3,11 @@ from .models import User, Conversation, Message
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for User model"""
+    username = serializers.CharField(required=True)
+
     class Meta:
         model = User
-        fields = ['user_id', 'first_name', 'last_name', 'email', 'role']
+        fields = ['user_id', 'username', 'first_name', 'last_name', 'email', 'role']
 
 
 class ConversationSerializer(serializers.ModelSerializer):
@@ -17,10 +19,11 @@ class ConversationSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True
     )
+    messages = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
-        fields = ['conversation_id', 'participants', 'participant_ids', 'created_at']
+        fields = ['conversation_id', 'participants', 'participant_ids', 'messages', 'created_at']
         read_only_fields = ['conversation_id', 'created_at']
 
     def validate_participant_ids(self, value):
@@ -35,6 +38,9 @@ class ConversationSerializer(serializers.ModelSerializer):
         conversation = Conversation.objects.create()
         conversation.participants.set(participant_ids)
         return conversation
+    
+    def get_messages(self, obj):
+        return MessageSerializer(obj.messages.all(), many=True).data
 
 
 class MessageSerializer(serializers.ModelSerializer):
