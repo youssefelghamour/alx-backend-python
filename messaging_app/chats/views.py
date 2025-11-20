@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .permissions import IsAuthenticatedUser
+from .permissions import IsAuthenticatedUser, IsParticipantOfConversation
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -19,7 +19,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class ConversationViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication, SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticatedUser]
+    permission_classes = [IsParticipantOfConversation]
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
     filter_backends = [filters.OrderingFilter]
@@ -37,7 +37,7 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
 class MessageViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication, SessionAuthentication, BasicAuthentication]
-    permission_classes = [IsAuthenticatedUser]
+    permission_classes = [IsParticipantOfConversation]
     serializer_class = MessageSerializer
     filter_backends = [filters.OrderingFilter]
 
