@@ -50,10 +50,10 @@ class MessageViewSet(viewsets.ModelViewSet):
 
         # Check that the logged-in user is a participant
         if self.request.user not in conversation.participants.all():
-            raise PermissionDenied("You are not part of this conversation.")
+            raise PermissionDenied(detail="You are not part of this conversation.", code=status.HTTP_403_FORBIDDEN)
 
         # Return all messages in this conversation from all participants
-        return conversation.messages.all()
+        return Message.objects.filter(conversation=conversation)
 
     def perform_create(self, serializer):
         """Only a logged in user who is part of the conversation can send a message"""
