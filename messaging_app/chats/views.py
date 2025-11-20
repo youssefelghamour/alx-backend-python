@@ -3,22 +3,23 @@ from rest_framework.response import Response
 from .models import User, Conversation, Message
 from .serializers import UserSerializer, ConversationSerializer, MessageSerializer
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from .permissions import IsAuthenticatedUser
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication, SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticatedUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_backends = [filters.OrderingFilter]  
 
 
 class ConversationViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication, SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticatedUser]
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
     filter_backends = [filters.OrderingFilter]
@@ -35,8 +36,8 @@ class ConversationViewSet(viewsets.ModelViewSet):
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication, SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication, SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticatedUser]
     serializer_class = MessageSerializer
     filter_backends = [filters.OrderingFilter]
 
@@ -56,7 +57,7 @@ class MessageViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         """Only a logged in user who is part of the conversation can send a message"""
-        
+
         # Get conversation from URL and user from request
         conversation = Conversation.objects.get(pk=self.kwargs['conversation_pk'])
 
