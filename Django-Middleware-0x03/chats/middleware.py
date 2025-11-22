@@ -1,4 +1,13 @@
 from datetime import datetime
+import logging
+
+
+logger = logging.getLogger(__name__)
+if not logger.handlers:
+    fh = logging.FileHandler('requests.log')
+    fh.setFormatter(logging.Formatter('%(message)s'))
+    logger.addHandler(fh)
+    logger.setLevel(logging.INFO)
 
 
 class RequestLoggingMiddleware:
@@ -12,8 +21,7 @@ class RequestLoggingMiddleware:
     
     def __call__(self, request):
         user = request.user if request.user.is_authenticated else 'Anonymous'
-        with open('requests.log', 'a') as log_file:
-            log_file.write(f"{datetime.now()} - User: {user} - Path: {request.path} \n")
+        logger.info(f"{datetime.now()} - User: {user} - Path: {request.path}")
 
         response = self.get_response(request)
         return response
