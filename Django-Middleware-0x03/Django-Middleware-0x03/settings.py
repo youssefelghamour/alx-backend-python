@@ -153,3 +153,28 @@ SIMPLE_JWT = {
     # Use user_id as the identifier in the JWT token instead of default 'id'
     'USER_ID_FIELD': 'user_id',
 }
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'request_file': {
+            'class': 'logging.FileHandler',
+            'filename': 'requests.log',
+            'formatter': 'simple',
+        },
+    },
+    'formatters': {
+        'simple': {
+            'format': '%(asctime)s - User: %(message)s',
+        },
+    },
+    'loggers': {
+        'request_logger': {
+            'handlers': ['request_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
