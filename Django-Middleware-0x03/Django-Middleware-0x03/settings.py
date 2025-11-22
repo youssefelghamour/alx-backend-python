@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'chats.middleware.RequestLoggingMiddleware',  # Custom middleware for logging requests
+    'chats.middleware.RestrictAccessByTimeMiddleware',  # Custom middleware for time-based access restriction
 ]
 
 ROOT_URLCONF = 'Django-Middleware-0x03.urls'
@@ -154,27 +155,3 @@ SIMPLE_JWT = {
     'USER_ID_FIELD': 'user_id',
 }
 
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'request_file': {
-            'class': 'logging.FileHandler',
-            'filename': 'requests.log',
-            'formatter': 'simple',
-        },
-    },
-    'formatters': {
-        'simple': {
-            'format': '%(asctime)s - User: %(message)s',
-        },
-    },
-    'loggers': {
-        'request_logger': {
-            'handlers': ['request_file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-    },
-}
