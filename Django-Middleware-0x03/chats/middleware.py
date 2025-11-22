@@ -81,3 +81,21 @@ class OffensiveLanguageMiddleware:
 
         response = self.get_response(request)
         return response
+
+
+
+class RolepermissionMiddleware:
+    """A middleware that restricts access to certain views based on user roles
+       For example, only allow users with 'admin' role to access admin views
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+    
+    def __call__(self, request):
+        # Example: restrict access to /admin/ path to users with 'admin' role
+        if 'api/admin/' in request.path:
+            if not request.user.is_authenticated or not request.user.role == 'admin':
+                return HttpResponseForbidden("You do not have permission to access this page.")
+        
+        response = self.get_response(request)
+        return response

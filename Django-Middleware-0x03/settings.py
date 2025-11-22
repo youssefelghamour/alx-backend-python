@@ -56,6 +56,7 @@ MIDDLEWARE = [
     'chats.middleware.RequestLoggingMiddleware',  # Custom middleware for logging requests
     'chats.middleware.RestrictAccessByTimeMiddleware',  # Custom middleware for time-based access restriction
     'chats.middleware.OffensiveLanguageMiddleware',  # Custom middleware for limiting the number of messages per min
+    'chats.middleware.RolepermissionMiddleware',  # Custom middleware for role-based access control
 ]
 
 ROOT_URLCONF = 'Django-Middleware-0x03.urls'
