@@ -5,15 +5,34 @@ from django.contrib.auth.models import User
 
 class MessageSerializer(serializers.ModelSerializer):
     history = serializers.SerializerMethodField()
+    replies = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = ['id', 'sender', 'receiver', 'content', 'timestamp', 'edited', 'parent_message', 'replies', 'history']
     
     def get_history(self, obj):
         # Retrieve the edit history of the current message
         history_qs = obj.history.all().order_by('-edited_at')
         return MessageHistorySerializer(history_qs, many=True).data
+
+    def get_replies(self, obj):
+        # Retrieve the replies to the current message
+        replies_qs = obj.replies.all().order_by('-timestamp')
+        return MessageSerializer(replies_qs, many=True).data
+
+
+class ThreadMessageSerializer(serializers.ModelSerializer):
+    """Same as MessageSerializer, but without edit history, used for threads"""
+    replies = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Message
+        fields = ['id', 'sender', 'receiver', 'content', 'timestamp', 'edited', 'parent_message', 'replies']
+
+    def get_replies(self, obj):
+        replies_qs = obj.replies.all().order_by('-timestamp')
+        return ThreadMessageSerializer(replies_qs, many=True).data
 
 
 class NotificationSerializer(serializers.ModelSerializer):
