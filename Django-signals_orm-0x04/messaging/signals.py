@@ -1,6 +1,7 @@
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from .models import Message, Notification, MessageHistory
+from django.contrib.auth.models import User
 
 
 @receiver(post_save, sender=Message)
@@ -28,3 +29,17 @@ def save_message_edit_history(sender, instance, **kwargs):
             old_content=old_message.content
         )
         instance.edited = True  # Mark the message as edited
+
+
+@receiver(post_delete, sender=User)
+def delete_user_related_data(sender, instance, **kwargs):
+    """Signal to delete all messages, notifications, and message histories
+        associated with the user, when the user is deleted
+        this logic is not necessary because fk relationships with user have on_delete=models.CASCADE
+        if a user is deleted:
+            - All their messages sent & received are deleted
+            - All notifications sent to them are deleted
+            - Notifications sent by them are deleted too, because the messages they sent that triggered those notifications are deleted
+            - All message history entries related to their messages are deleted (on message deletion)
+    """
+    pass

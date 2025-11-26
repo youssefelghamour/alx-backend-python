@@ -1,5 +1,7 @@
 from rest_framework.routers import DefaultRouter
+from django.urls import path
 from .views import MessageViewSet, NotificationViewSet, UserViewSet, MessageHistoryViewSet
+from .views import delete_user
 
 router = DefaultRouter()
 router.register(r'messages', MessageViewSet)
@@ -8,4 +10,6 @@ router.register(r'users', UserViewSet)
 router.register(r'message-history', MessageHistoryViewSet)
 
 
-urlpatterns = router.urls
+urlpatterns = router.urls + [
+    path('delete-user/', delete_user),
+]
