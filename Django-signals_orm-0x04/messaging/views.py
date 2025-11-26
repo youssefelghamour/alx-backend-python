@@ -49,6 +49,7 @@ def threads(request):
     Returns all top-level messages (messages with no parent) and their full reply trees.
     Replies are prefetched to avoid extra database queries.
     """
+    sender=request.user
     # Prefetch replies with sender and receiver
     replies_prefetch = Prefetch(
         'replies',
