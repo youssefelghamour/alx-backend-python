@@ -27,8 +27,6 @@ class MessageViewSet(viewsets.ModelViewSet):
             
             Maintains a conversation between two users
         """
-        request = self.request
-        sender = request.user
         parent_message = serializer.validated_data.get('parent_message')
         if parent_message:  # if it's a reply
             # User replies to their own message in a conversation (A replies to 1)
@@ -49,6 +47,7 @@ class ThreadsViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
     def list(self, request):
+        sender = request.user
         top_messages = Message.objects.filter(parent_message__isnull=True)\
             .select_related('sender', 'receiver')\
             .prefetch_related(
