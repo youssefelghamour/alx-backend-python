@@ -14,7 +14,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
 
     def perform_create(self, serializer):
-        """ The sender of a reply is the logged-in user sending it
+        """ The sender of a reply is the logged-in user sending it: sender = request.user
             The receiver of a reply is the other participant in the parent message
 
             Example: Conversation between A and B:
