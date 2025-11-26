@@ -14,7 +14,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
 
     def perform_create(self, serializer):
-        """ The sender of a reply is the logged-in user sending it: sender = request.user
+        """ The sender of a reply is the logged-in user sending it
             The receiver of a reply is the other participant in the parent message
 
             Example: Conversation between A and B:
@@ -27,6 +27,8 @@ class MessageViewSet(viewsets.ModelViewSet):
             
             Maintains a conversation between two users
         """
+        request = self.request
+        sender = request.user
         parent_message = serializer.validated_data.get('parent_message')
         if parent_message:  # if it's a reply
             # User replies to their own message in a conversation (A replies to 1)
