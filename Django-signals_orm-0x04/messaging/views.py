@@ -7,6 +7,8 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.db.models import Prefetch
+
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -47,14 +49,17 @@ def threads(request):
     Returns all top-level messages (messages with no parent) and their full reply trees.
     Replies are prefetched to avoid extra database queries.
     """
-    sender = request.user
+    # Prefetch replies with sender and receiver
+    replies_prefetch = Prefetch(
+        'replies',
+        queryset=Message.objects.select_related('sender', 'receiver').all()
+    )
+
     top_messages = Message.objects.filter(parent_message__isnull=True)\
         .select_related('sender', 'receiver')\
         .prefetch_related(
-            'replies__sender',
-            'replies__receiver',
-            'replies__replies__sender',
-            'replies__replies__receiver'
+            replies_prefetch,
+            Prefetch('replies__replies', queryset=Message.objects.select_related('sender', 'receiver').all())
         )
 
     serializer = ThreadMessageSerializer(top_messages, many=True)
