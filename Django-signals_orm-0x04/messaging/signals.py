@@ -42,4 +42,19 @@ def delete_user_related_data(sender, instance, **kwargs):
             - Notifications sent by them are deleted too, because the messages they sent that triggered those notifications are deleted
             - All message history entries related to their messages are deleted (on message deletion)
     """
+    """
+    # Delete message history of messages sent by the user
+    MessageHistory.objects.filter(message__sender=instance).delete()
+    # Delete message history of messages received by the user
+    MessageHistory.objects.filter(message__receiver=instance).delete()
+
+    # Delete notifications received by the user
+    Notification.objects.filter(user=instance).delete()
+    # Delete notifications sent by the user
+    Notification.objects.filter(message__sender=instance).delete()
+
+    # Delete messages sent or received by the user
+    Message.objects.filter(sender=instance).delete()
+    Message.objects.filter(receiver=instance).delete()
+    """
     pass
