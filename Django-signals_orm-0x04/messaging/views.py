@@ -40,26 +40,25 @@ class MessageViewSet(viewsets.ModelViewSet):
             serializer.save(sender=self.request.user)
 
 
-class ThreadsViewSet(viewsets.ViewSet):
-    """ Returns all top-level messages (messages with no parent) and their full reply trees
-        Replies are prefetched to avoid extra database queries
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def threads(request):
     """
-    permission_classes = [IsAuthenticated]
+    Returns all top-level messages (messages with no parent) and their full reply trees.
+    Replies are prefetched to avoid extra database queries.
+    """
+    sender = request.user
+    top_messages = Message.objects.filter(parent_message__isnull=True)\
+        .select_related('sender', 'receiver')\
+        .prefetch_related(
+            'replies__sender',
+            'replies__receiver',
+            'replies__replies__sender',
+            'replies__replies__receiver'
+        )
 
-    def list(self, request):
-        sender = request.user
-        top_messages = Message.objects.filter(parent_message__isnull=True)\
-            .select_related('sender', 'receiver')\
-            .prefetch_related(
-                'replies__sender',
-                'replies__receiver',
-                'replies__replies__sender',
-                'replies__replies__receiver'
-            )
-
-        serializer = ThreadMessageSerializer(top_messages, many=True)
-        return Response(serializer.data)
-
+    serializer = ThreadMessageSerializer(top_messages, many=True)
+    return Response(serializer.data)
 
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
