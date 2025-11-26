@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import Message, Notification
-from .serializers import MessageSerializer, NotificationSerializer
+from .models import Message, Notification, MessageHistory
+from .serializers import MessageSerializer, NotificationSerializer, MessageHistorySerializer
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
 
@@ -18,3 +18,8 @@ class NotificationViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class MessageHistoryViewSet(viewsets.ModelViewSet):
+    queryset = MessageHistory.objects.all()
+    serializer_class = MessageHistorySerializer
