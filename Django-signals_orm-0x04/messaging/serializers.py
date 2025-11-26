@@ -11,6 +11,7 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = '__all__'
     
     def get_history(self, obj):
+        # Retrieve the edit history of the current message
         history_qs = obj.history.all().order_by('-edited_at')
         return MessageHistorySerializer(history_qs, many=True).data
 

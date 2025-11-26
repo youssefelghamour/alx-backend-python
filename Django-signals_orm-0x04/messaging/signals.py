@@ -22,5 +22,9 @@ def save_message_edit_history(sender, instance, **kwargs):
     
     if old_message.content != instance.content:
         # Content has changed, save the old content to MessageHistory
-        MessageHistory.objects.create(message=old_message, old_content=old_message.content)
+        MessageHistory.objects.create(
+            message=old_message,
+            edited_by=old_message.sender,
+            old_content=old_message.content
+        )
         instance.edited = True  # Mark the message as edited
