@@ -1,12 +1,13 @@
 from rest_framework import viewsets
 from .models import Message, Notification, MessageHistory
-from .serializers import MessageSerializer, NotificationSerializer, MessageHistorySerializer, ThreadMessageSerializer
+from .serializers import MessageSerializer, NotificationSerializer, MessageHistorySerializer, ThreadMessageSerializer, UnreadMessageSerializer
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from django.db.models import Prefetch
 
 
@@ -40,6 +41,12 @@ class MessageViewSet(viewsets.ModelViewSet):
         else:
             # normal message
             serializer.save(sender=self.request.user)
+    
+    @action(detail=False, permission_classes=[IsAuthenticated])
+    def unread(self, request):
+        queryset = Message.unread.unread_messages_for_user(request.user)
+        serializer = UnreadMessageSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 @api_view(['GET'])
@@ -65,6 +72,7 @@ def threads(request):
 
     serializer = ThreadMessageSerializer(top_messages, many=True)
     return Response(serializer.data)
+
 
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()

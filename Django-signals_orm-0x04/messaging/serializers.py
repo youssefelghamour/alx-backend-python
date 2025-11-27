@@ -9,7 +9,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'sender', 'receiver', 'content', 'timestamp', 'edited', 'parent_message', 'replies', 'history']
+        fields = ['id', 'sender', 'receiver', 'content', 'timestamp', 'edited', 'is_read', 'parent_message', 'replies', 'history']
     
     def get_history(self, obj):
         # Retrieve the edit history of the current message
@@ -69,3 +69,9 @@ class MessageHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageHistory
         fields = '__all__'
+
+
+class UnreadMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ['id', 'sender', 'content', 'timestamp']
