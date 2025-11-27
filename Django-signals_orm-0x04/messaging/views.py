@@ -44,7 +44,8 @@ class MessageViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, permission_classes=[IsAuthenticated])
     def unread(self, request):
-        queryset = Message.unread.unread_messages_for_user(request.user)
+        queryset = Message.unread.unread_for_user(request.user)\
+                        .only('id', 'sender', 'content', 'timestamp')
         serializer = UnreadMessageSerializer(queryset, many=True)
         return Response(serializer.data)
 
