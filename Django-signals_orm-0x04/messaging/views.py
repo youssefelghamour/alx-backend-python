@@ -8,6 +8,8 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.db.models import Prefetch
 
 
@@ -15,6 +17,11 @@ from django.db.models import Prefetch
 class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+
+    @method_decorator(cache_page(60))  # cache for 1 minute
+    def list(self, request, *args, **kwargs):
+        print("querying the db *******************")
+        return super().list(request, *args, **kwargs)
 
     def perform_create(self, serializer):
         """ The sender of a reply is the logged-in user sending it
@@ -44,6 +51,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, permission_classes=[IsAuthenticated])
     def unread(self, request):
+        """route: messages/unread/"""
         queryset = Message.unread.unread_for_user(request.user)\
                         .only('id', 'sender', 'content', 'timestamp')
         serializer = UnreadMessageSerializer(queryset, many=True)
