@@ -1,6 +1,6 @@
 from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.exceptions import PermissionDenied
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -17,7 +17,13 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedUser]
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filter_backends = [filters.OrderingFilter]  
+    filter_backends = [filters.OrderingFilter]
+
+    def get_permissions(self):
+        """Allow unauthenticated access to POST /users/ for signup"""
+        if self.action == "create":  # signup
+            return [AllowAny()]
+        return super().get_permissions()
 
 
 class ConversationViewSet(viewsets.ModelViewSet):
