@@ -5,6 +5,7 @@ services:
     image: mysql:8
     restart: always
     environment:
+      MYSQL_DB: ${DB_NAME}
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
@@ -14,7 +15,7 @@ services:
   
   web:
     build: .
-    command: sh -c "./wait-for-it.sh db:3306 -- python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "./wait-for-it.sh db:3306 --timeout=60 --strict -- python3 manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     ports:
       - "8000:8000"
     env_file:
