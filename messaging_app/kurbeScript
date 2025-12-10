@@ -1,0 +1,4 @@
+#!/bin/bash
+minikube start --driver=docker  # Start a local Kubernetes cluster using Docker
+kubectl cluster-info  # Verify that the cluster is running
+kubectl get pods  # Retrieve the available pods
