@@ -1,4 +1,12 @@
 #!/bin/bash
-minikube start --driver=docker  # Start a local Kubernetes cluster using Docker
-kubectl cluster-info  # Verify that the cluster is running
-kubectl get pods  # Retrieve the available pods
+# A script to set up kubernetes
+
+# Check if minikube is installed
+if command -v minikube &> /dev/null; then
+    minikube start --driver=docker  # Start a local Kubernetes cluster using Docker
+    kubectl cluster-info  # Verify that the cluster is running
+    kubectl get pods  # Retrieve the available pods
+else
+    echo "Minikube is not installed"
+    exit 1
+fi
