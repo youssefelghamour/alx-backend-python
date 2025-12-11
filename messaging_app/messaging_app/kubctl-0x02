@@ -1,0 +1,37 @@
+#!/bin/bash
+# A script to implement a Blue-Green Deployment Strategy
+
+# Deploy 3 Blue and 3 Green pods
+echo "==== Deploying BLUE version ===="
+kubectl apply -f blue_deployment.yaml
+echo "==== Deploying GREEN version ===="
+kubectl apply -f green_deployment.yaml
+echo
+
+# Edit the existing service (django-service) to point to blue initially
+echo "==== Applying initial service (routing to BLUE) ===="
+kubectl apply -f kubeservice.yaml
+echo
+
+# Wait a few seconds
+echo "==== Waiting for pods to start... ===="
+sleep 10
+echo
+
+echo "==== Current Pods (BLUE + GREEN) ===="
+kubectl get pods
+echo
+
+# Check logs of green pods
+echo "==== Checking logs for GREEN pods ===="
+kubectl get pods -l version=green -o name | xargs -I {} kubectl logs {}
+echo
+
+# Switch traffic to green when ready
+echo "==== Switching service traffic to GREEN ===="
+kubectl patch svc django-service -p '{"spec":{"selector":{"app":"django-app","version":"green"}}}'
+echo
+
+echo "==== Blue-Green switch complete ===="
+echo "Blue pods still running if you want to rollback"
+echo "======================================"
