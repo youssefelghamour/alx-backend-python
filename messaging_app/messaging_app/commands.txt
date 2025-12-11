@@ -1,0 +1,25 @@
+# Commands to set up Kubernetes Ingress for exposing the Django app externally
+
+# Enable Nginx ingress controller
+minikube addons enable ingress
+
+# Apply the Ingress resource
+kubectl apply -f ingress.yaml
+
+# Check the Ingress created
+kubectl get ingress
+
+# Show detailed info about the Ingress
+kubectl describe ingress django-ingress
+
+# Get the Minikube cluster IP
+minikube ip
+
+# Check the type of the Django service (we're using ClusterIP)
+kubectl get svc
+
+# Start a tunnel to expose LoadBalancer services externally
+minikube tunnel
+
+# Access the app:
+curl http://localhost/api/
