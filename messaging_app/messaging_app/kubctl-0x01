@@ -1,0 +1,50 @@
+#!/bin/bash
+
+echo "==== Scaling Django Deployment to 3 replicas ===="
+# Scale the deployment so Kubernetes runs 3 pods instead of the current 1
+kubectl scale deployment django-messaging-app --replicas=3
+# Wait for the pods to run
+sleep 10
+echo
+
+echo "==== Current Pods ===="
+# Verify that all 3 pods are running
+kubectl get pods
+echo
+
+# Start port-forward in the background
+echo "==== Starting port-forward to access service from outside the cluster ===="
+# Port-forward exposes the internal ClusterIP service to localhost so wrk can send HTTP requests
+kubectl port-forward service/django-service 8000:8000 >/dev/null 2>&1 &
+PF_PID=$!
+# Wait for port-forward to be ready
+sleep 5
+echo
+
+# Load test
+echo "==== Running load test with wrk ===="
+# Send concurrent requests to the service to see how the scaled app handles traffic
+wrk -t2 -c50 -d10s http://localhost:8000/api/
+echo
+
+# Stop port-forward
+echo "==== Stopping port-forward ===="
+# Kill the background port-forward process
+kill $PF_PID
+# Or manually: ps aux | grep "kubectl port-forward" and: kill pid
+echo
+
+# Show resource usage
+echo "=== Enabling Metrics API in our cluster ==="
+minikube addons enable metrics-server
+sleep 5
+echo
+
+echo "==== Resource usage of pods ===="
+kubectl top pods
+echo
+echo "==== Resource usage of nodes ===="
+kubectl top nodes
+
+echo
+echo "==== Done ===="
