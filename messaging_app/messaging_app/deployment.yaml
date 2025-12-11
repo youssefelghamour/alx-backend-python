@@ -1,0 +1,36 @@
+# Deployment for Django Messaging App
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-messaging-app
+spec:
+  replicas: 1  # Create a single pod in the recpilca set
+  selector:
+    matchLabels:
+      app: django-app
+  template:
+    metadata:
+      labels:
+        app: django-app
+    spec:
+      containers:
+      - name: django-app
+        image: messaging_app-web  # Our app's docker image
+        imagePullPolicy: IfNotPresent  # Use images locally in minikube instead of pulling from a registry
+        ports:
+        - containerPort: 8000  # Port the app listens on
+
+---
+
+# An internal ClusterIP Service to expose the app within the cluster internally
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-service
+spec:
+  type: ClusterIP  # Internal service, not accessible outside the cluster
+  selector:
+    app: django-app  # Matches Pods with this label
+  ports:
+  - port: 8000  # Service port
+    targetPort: 8000  # Port on the Pod
