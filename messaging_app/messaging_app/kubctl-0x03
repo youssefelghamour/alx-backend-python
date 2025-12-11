@@ -1,0 +1,38 @@
+#!/bin/bash
+
+echo "==== Applying updated BLUE deployment (now using image v2.0) ===="
+kubectl apply -f blue_deployment.yaml
+echo
+
+echo "==== Monitoring rolling update ===="
+kubectl rollout status deployment/django-messaging-app-blue
+echo
+
+echo "==== Starting port-forward to access service from outside the cluster ===="
+kubectl port-forward service/django-service 8000:8000 >/dev/null 2>&1 &
+PF_PID=$!
+sleep 5
+
+echo "==== Testing app continuity with curl ===="
+for i in {1..20}; do
+    # Store the status code of each request in a variable while discrading the output
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/api/)
+    # Print out the status code for each request: 401 is expected because our api requires authentication
+    echo "Request $i: $HTTP_CODE"
+    sleep 1
+done
+echo
+
+echo "==== Stopping port-forward ===="
+kill $PF_PID
+echo
+
+echo "==== Current Pods ===="
+kubectl get pods
+echo
+
+echo "==== Switching service back to BLUE pods ===="
+kubectl patch svc django-service -p '{"spec":{"selector":{"app":"django-app","version":"blue"}}}'
+echo
+
+echo "==== Rolling update complete ===="
