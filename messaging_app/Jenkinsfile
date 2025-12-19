@@ -8,6 +8,7 @@ pipeline {
                 // Pull the repo from Github
                 git(
                     url: 'https://github.com/youssefelghamour/alx-backend-python.git',
+                    get credentialsId: 'github-credentials',
                     branch: 'main'
                 )
             }
@@ -15,21 +16,19 @@ pipeline {
 
         stage('Install dependancies') {
             steps {
-                dir('messaging_app') { // cd into messaging_app directory
-                    sh '''
-                    /usr/bin/python3 -m venv venv
-                    . venv/bin/activate
-                    pip install -r requirements.txt
-                    # Install pytest and HTML report plugin
-                    pip install pytest pytest-html
-                    '''
-                }
+                sh '''
+                /usr/bin/python3 -m venv venv
+                . venv/bin/activate
+                pip3 install -r messaging_app/requirements.txt
+                # Install pytest and HTML report plugin
+                pip install pytest pytest-html
+                '''
             }
         }
 
         stage('Run tests') {
             steps {
-                dir('messaging_app') {
+                dir('messaging_app') { // cd into messaging_app directory
                     // DB credentials are stored securely in Jenkins Credentials, not in the repo
                     withCredentials([
                         usernamePassword(credentialsId: 'db_credentials', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASS'),
