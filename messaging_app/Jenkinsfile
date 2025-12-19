@@ -46,8 +46,6 @@ pipeline {
                         export DB_HOST=$DB_HOST
                         export DB_PORT=$DB_PORT
                         export DJANGO_SETTINGS_MODULE=messaging_app.settings
-                        # Flag to tell Django tests to use in-memory SQLite on Jenkins
-                        export JENKINS=1
                         # Run tests and generate an HTML report
                         pytest --html=report.html --self-contained-html
                         '''

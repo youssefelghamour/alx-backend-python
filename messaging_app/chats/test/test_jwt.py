@@ -1,18 +1,3 @@
-import os
-# Set up in-memory database for Jenkins CI environment
-# to ensure it uses SQLite in-memory database instead of default settings MySQL db
-# You can remove this block (lines 1-13) if not using or unning test in Jenkins pipeline
-if os.environ.get("JENKINS"):
-    from django.conf import settings
-    settings.DATABASES = {
-        "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}
-    }
-    # Disable migrations (auto-create tables)
-    settings.MIGRATION_MODULES = {app: None for app in settings.INSTALLED_APPS}
-
-import django
-django.setup()
-
 from django.test import TestCase
 from rest_framework.test import APIClient
 from django.contrib.auth import get_user_model
