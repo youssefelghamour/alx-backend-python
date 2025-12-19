@@ -1,4 +1,4 @@
-""" Test permissions with mocked users and tokens to avoid database dependency for testing in Jenkins pipeline """
+""" Test permissions with mocked users and tokens to avoid database dependency for testing in Jenkins pipeline
 from unittest.mock import patch, MagicMock
 from django.test import TestCase
 from rest_framework.test import APIClient
@@ -100,3 +100,4 @@ class TestPermissionsMocked(TestCase):
         updated_message_data = {"message_body": "Attempted update by non-sender"}
         response = self.client.put(f"/api/conversations/{conversation_id}/messages/{message_id}/", updated_message_data, format="json")
         self.assertIn(response.status_code, [403, 401])
+"""
