@@ -7,6 +7,8 @@ if os.environ.get("JENKINS"):
     settings.DATABASES = {
         "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}
     }
+    # Disable migrations (auto-create tables)
+    settings.MIGRATION_MODULES = {app: None for app in settings.INSTALLED_APPS}
 
 import django
 django.setup()
