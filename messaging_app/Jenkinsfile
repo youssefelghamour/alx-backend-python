@@ -38,14 +38,16 @@ pipeline {
                         string(credentialsId: 'db_port', variable: 'DB_PORT')
                     ]) {
                         sh '''
+                        . venv/bin/activate
                         export DJANGO_SETTINGS_MODULE=messaging_app.settings
                         export DB_NAME=$DB_NAME
                         export DB_USER=$DB_USER
                         export DB_PASSWORD=$DB_PASS
                         export DB_HOST=$DB_HOST
                         export DB_PORT=$DB_PORT
-                        . venv/bin/activate
                         export DJANGO_SETTINGS_MODULE=messaging_app.settings
+                        # initialize Django
+                        python -m django setup
                         # Run tests and generate an HTML report
                         pytest --html=report.html --self-contained-html
                         '''
