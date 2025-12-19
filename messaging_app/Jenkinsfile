@@ -8,8 +8,8 @@ pipeline {
                 // Pull the repo from Github
                 git(
                     url: 'https://github.com/youssefelghamour/alx-backend-python.git',
-                    get credentialsId: 'github-credentials',
-                    branch: 'main'
+                    branch: 'main',
+                    credentialsId: 'github-credentials'
                 )
             }
         }
