@@ -38,6 +38,7 @@ pipeline {
                     ]) {
                         sh '''
                         . venv/bin/activate
+                        export PYTHONPATH=$PWD
                         export DJANGO_SETTINGS_MODULE=messaging_app.settings
                         export DB_NAME=$DB_NAME
                         export DB_USER=$DB_USER
