@@ -21,7 +21,7 @@ pipeline {
                 . venv/bin/activate
                 pip3 install -r messaging_app/requirements.txt
                 # Install pytest and HTML report plugin
-                pip install pytest pytest-html
+                pip install pytest pytest-html pytest-django
                 '''
             }
         }
