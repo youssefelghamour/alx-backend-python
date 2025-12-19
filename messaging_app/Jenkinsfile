@@ -47,7 +47,7 @@ pipeline {
                         export DB_PORT=$DB_PORT
                         export DJANGO_SETTINGS_MODULE=messaging_app.settings
                         # Run tests and generate an HTML report
-                        pytest jenkins_tests/ --html=report.html --self-contained-html
+                        pytest chats/test/jenkins_tests/ --html=report.html --self-contained-html
                         '''
                     }
                 }
