@@ -41,7 +41,8 @@ pipeline {
                         export DJANGO_SETTINGS_MODULE=messaging_app.settings
                         # Run tests and generate an HTML report
                         pytest --html=report.html --self-contained-html
-                    '''
+                        '''
+                    }
                 }
             }
             post {
