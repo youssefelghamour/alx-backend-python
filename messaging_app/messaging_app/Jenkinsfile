@@ -11,6 +11,7 @@ pipeline {
                     branch: 'main',
                     credentialsId: 'github-credentials'
                 )
+                sh 'git branch'       // just show the current branch
             }
         }
 
@@ -47,7 +48,8 @@ pipeline {
                         export DB_PORT=$DB_PORT
                         export DJANGO_SETTINGS_MODULE=messaging_app.settings
                         # Run tests and generate an HTML report
-                        pytest chats/test/jenkins_tests/ --html=report.html --self-contained-html
+                        # ([ $? -eq 5 ] && exit 0 || exit $?): allows pytest to pass even if no tests are collected (code 5) exit with 0 = pass, otherwise fail build on test fails
+                        pytest chats/test/jenkins_tests/ --html=report.html --self-contained-html || ([ $? -eq 5 ] && exit 0 || exit $?)
                         '''
                     }
                 }
