@@ -7,6 +7,15 @@ import django
 django.setup()
 
 
+import os
+from django.conf import settings
+
+if os.environ.get("JENKINS"):
+    settings.DATABASES = {
+        "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}
+    }
+
+
 User = get_user_model()
 
 
