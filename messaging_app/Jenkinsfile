@@ -31,12 +31,17 @@ pipeline {
             steps {
                 dir('messaging_app') {
                     // DB credentials are stored securely in Jenkins Credentials, not in the repo
-                    withCredentials([usernamePassword(credentialsId: 'db_credentials', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASS')]) {
+                    withCredentials([
+                        usernamePassword(credentialsId: 'db_credentials', usernameVariable: 'DB_USER', passwordVariable: 'DB_PASS'),
+                        string(credentialsId: 'db_name', variable: 'DB_NAME'),
+                        string(credentialsId: 'db_host', variable: 'DB_HOST')
+                    ]) {
                         sh '''
                         export DJANGO_SETTINGS_MODULE=messaging_app.settings
-                        export DB_NAME=messaging_db
+                        export DB_NAME=$DB_NAME
                         export DB_USER=$DB_USER
                         export DB_PASSWORD=$DB_PASS
+                        export DB_HOST=$DB_HOST
                         . venv/bin/activate
                         export DJANGO_SETTINGS_MODULE=messaging_app.settings
                         # Run tests and generate an HTML report
