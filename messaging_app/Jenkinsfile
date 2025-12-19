@@ -17,7 +17,7 @@ pipeline {
             steps {
                 dir('messaging_app') { // cd into messaging_app directory
                     sh '''
-                    python3 -m venv venv
+                    /usr/bin/python3 -m venv venv
                     . venv/bin/activate
                     pip install -r requirements.txt
                     # Install pytest and HTML report plugin
