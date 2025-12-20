@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+venv/
+*.pyo
+*.pyd
+*.sqlite3
+*.png
+*.jpg
+*.jpeg
