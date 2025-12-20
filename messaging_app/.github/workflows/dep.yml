@@ -21,8 +21,8 @@ jobs:
 
       # Build Docker image
       - name: Build Docker image
-        run: docker build -f messaging_app/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/messaging_app:latest messaging_app/
+        run: docker build -f messaging-app/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/messaging-app:latest messaging-app/
 
       # Push Docker image
       - name: Push Docker image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/messaging_app:latest
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/messaging-app:latest
