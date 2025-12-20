@@ -77,7 +77,8 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh '''
                     echo $PASS | docker login -u $USER --password-stdin
-                    docker push youssefelghamour/messaging-app:latest
+                    docker tag youssefelghamour/messaging-app:latest youssefelghamour/messaging-app:jenkins
+                    docker push youssefelghamour/messaging-app:jenkins
                     '''
                 }
             }
