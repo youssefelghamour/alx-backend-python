@@ -46,6 +46,11 @@ jobs:
             echo "Waiting for MySQL..."
             sleep 5
           done
+      
+      # Grant privileges so we can create test DB
+      - name: Grant privileges
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -u root -proot -e "GRANT ALL PRIVILEGES ON *.* TO 'test_user'@'%' WITH GRANT OPTION; FLUSH PRIVILEGES;"
 
       # Run tests
       - name: Run Django tests
