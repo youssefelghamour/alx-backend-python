@@ -59,4 +59,4 @@ jobs:
           export DJANGO_SETTINGS_MODULE=messaging_app.settings
 
           cd messaging_app
-          pytest chats/test/ --html=report.html --self-contained-html
+          pytest --create-db chats/test/ --html=report.html --self-contained-html
